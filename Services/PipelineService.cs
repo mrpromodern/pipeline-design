@@ -16,12 +16,12 @@ namespace PipelineDesign.Services
 
         public IEnumerable<Pipeline> GetAllPipelines()
         {
-            return _pipelineRepository.GetAll();
+            return _pipelineRepository.GetPipelines();
         }
 
         public Pipeline GetPipelineById(string id)
         {
-            return _pipelineRepository.GetById(id);
+            return _pipelineRepository.GetPipelineById(id);
         }
 
         public void CreatePipeline(Pipeline pipeline)

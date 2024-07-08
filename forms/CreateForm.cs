@@ -16,6 +16,7 @@ namespace PipelineDesign.forms
             _nodeService = nodeService;
             _pipelineService = pipelineService;
             InitializeComponent();
+            this.StartPosition = FormStartPosition.CenterScreen;
         }
 
         private bool AreSpecificInputsFilled()
@@ -64,12 +65,15 @@ namespace PipelineDesign.forms
 
                 _nodeService.CreateNodes(nodes);
 
-                if (MessageBox.Show("Трубопровод успешно создан. Хотите продолжить?", "Успешно", MessageBoxButtons.YesNo) == DialogResult.No)
+                if (MessageBox.Show("Трубопровод успешно создан. Хотите закончить?", "Успешно", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     Close();
                 }
-                
-
+                else
+                {
+                    txtNamePipeline.Text = "";
+                    dataGridXY.Rows.Clear();
+                }
             }
         }
     }

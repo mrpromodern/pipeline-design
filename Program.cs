@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using PipelineDesign.Data;
 using PipelineDesign.forms;
+using PipelineDesign.Forms;
 using PipelineDesign.Repositories;
 using PipelineDesign.Services;
 using System;
@@ -38,6 +39,7 @@ namespace PipelineDesign
 
             services.AddSingleton<MainForm>();
             services.AddSingleton<CreateForm>();
+            services.AddSingleton<UpdateForm>();
         }
     }
 }
