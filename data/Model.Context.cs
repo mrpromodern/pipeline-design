@@ -7,16 +7,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PipelineDesign.data
+namespace PipelineDesign.Data
 {
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class DatabaseEntities : DbContext
+    public partial class AppDbContext : DbContext
     {
-        public DatabaseEntities()
-            : base("name=DatabaseEntities")
+        public AppDbContext()
+            : base("name=AppDbContext")
         {
         }
     
@@ -25,7 +25,7 @@ namespace PipelineDesign.data
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Nodes> Nodes { get; set; }
-        public virtual DbSet<Pipelines> Pipelines { get; set; }
+        public virtual DbSet<Node> Node { get; set; }
+        public virtual DbSet<Pipeline> Pipeline { get; set; }
     }
 }

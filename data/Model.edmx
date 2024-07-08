@@ -5,40 +5,40 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
       <Schema Namespace="Хранилище DatabaseModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="Nodes">
+        <EntityType Name="Node">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
-          <Property Name="X" Type="int" Nullable="false" />
-          <Property Name="Y" Type="int" Nullable="false" />
-          <Property Name="PipelineId" Type="int" Nullable="false" />
+          <Property Name="Id" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="X" Type="float" Nullable="false" />
+          <Property Name="Y" Type="float" Nullable="false" />
+          <Property Name="PipelineId" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
-        <EntityType Name="Pipelines">
+        <EntityType Name="Pipeline">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
-          <Property Name="Name" Type="int" Nullable="false" />
+          <Property Name="Id" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
-        <Association Name="FK_Nodes_Pipelines">
-          <End Role="Pipelines" Type="Self.Pipelines" Multiplicity="1" />
-          <End Role="Nodes" Type="Self.Nodes" Multiplicity="*" />
+        <Association Name="FK_Node_Pipeline">
+          <End Role="Pipeline" Type="Self.Pipeline" Multiplicity="1" />
+          <End Role="Node" Type="Self.Node" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Pipelines">
+            <Principal Role="Pipeline">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Nodes">
+            <Dependent Role="Node">
               <PropertyRef Name="PipelineId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="Хранилище DatabaseModelContainer">
-          <EntitySet Name="Nodes" EntityType="Self.Nodes" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Pipelines" EntityType="Self.Pipelines" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK_Nodes_Pipelines" Association="Self.FK_Nodes_Pipelines">
-            <End Role="Pipelines" EntitySet="Pipelines" />
-            <End Role="Nodes" EntitySet="Nodes" />
+          <EntitySet Name="Node" EntityType="Self.Node" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Pipeline" EntityType="Self.Pipeline" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Node_Pipeline" Association="Self.FK_Node_Pipeline">
+            <End Role="Pipeline" EntitySet="Pipeline" />
+            <End Role="Node" EntitySet="Node" />
           </AssociationSet>
         </EntityContainer>
       </Schema>
@@ -46,42 +46,42 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="DatabaseModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="Nodes">
+        <EntityType Name="Node">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="X" Type="Int32" Nullable="false" />
-          <Property Name="Y" Type="Int32" Nullable="false" />
-          <Property Name="PipelineId" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Pipelines" Relationship="Self.FK_Nodes_Pipelines" FromRole="Nodes" ToRole="Pipelines" />
+          <Property Name="Id" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="X" Type="Double" Nullable="false" />
+          <Property Name="Y" Type="Double" Nullable="false" />
+          <Property Name="PipelineId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Pipeline" Relationship="Self.FK_Node_Pipeline" FromRole="Node" ToRole="Pipeline" />
         </EntityType>
-        <EntityType Name="Pipelines">
+        <EntityType Name="Pipeline">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Nodes" Relationship="Self.FK_Nodes_Pipelines" FromRole="Pipelines" ToRole="Nodes" />
+          <Property Name="Id" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Node" Relationship="Self.FK_Node_Pipeline" FromRole="Pipeline" ToRole="Node" />
         </EntityType>
-        <Association Name="FK_Nodes_Pipelines">
-          <End Role="Pipelines" Type="Self.Pipelines" Multiplicity="1" />
-          <End Role="Nodes" Type="Self.Nodes" Multiplicity="*" />
+        <Association Name="FK_Node_Pipeline">
+          <End Role="Pipeline" Type="Self.Pipeline" Multiplicity="1" />
+          <End Role="Node" Type="Self.Node" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Pipelines">
+            <Principal Role="Pipeline">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Nodes">
+            <Dependent Role="Node">
               <PropertyRef Name="PipelineId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="DatabaseEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Nodes" EntityType="Self.Nodes" />
-          <EntitySet Name="Pipelines" EntityType="Self.Pipelines" />
-          <AssociationSet Name="FK_Nodes_Pipelines" Association="Self.FK_Nodes_Pipelines">
-            <End Role="Pipelines" EntitySet="Pipelines" />
-            <End Role="Nodes" EntitySet="Nodes" />
+        <EntityContainer Name="AppDbContext" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Node" EntityType="Self.Node" />
+          <EntitySet Name="Pipeline" EntityType="Self.Pipeline" />
+          <AssociationSet Name="FK_Node_Pipeline" Association="Self.FK_Node_Pipeline">
+            <End Role="Pipeline" EntitySet="Pipeline" />
+            <End Role="Node" EntitySet="Node" />
           </AssociationSet>
         </EntityContainer>
       </Schema>
@@ -89,10 +89,10 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="Хранилище DatabaseModelContainer" CdmEntityContainer="DatabaseEntities">
-          <EntitySetMapping Name="Nodes">
-            <EntityTypeMapping TypeName="DatabaseModel.Nodes">
-              <MappingFragment StoreEntitySet="Nodes">
+        <EntityContainerMapping StorageEntityContainer="Хранилище DatabaseModelContainer" CdmEntityContainer="AppDbContext">
+          <EntitySetMapping Name="Node">
+            <EntityTypeMapping TypeName="DatabaseModel.Node">
+              <MappingFragment StoreEntitySet="Node">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="X" ColumnName="X" />
                 <ScalarProperty Name="Y" ColumnName="Y" />
@@ -100,9 +100,9 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Pipelines">
-            <EntityTypeMapping TypeName="DatabaseModel.Pipelines">
-              <MappingFragment StoreEntitySet="Pipelines">
+          <EntitySetMapping Name="Pipeline">
+            <EntityTypeMapping TypeName="DatabaseModel.Pipeline">
+              <MappingFragment StoreEntitySet="Pipeline">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
               </MappingFragment>
