@@ -9,6 +9,7 @@ namespace PipelineDesign.Repositories
         void Add(T entity);
         void Update(T entity);
         void Delete(string id);
+        void DeleteMany(IEnumerable<T> entities);
         void Save();
     }
 }

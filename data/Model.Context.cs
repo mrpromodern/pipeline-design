@@ -22,7 +22,7 @@ namespace PipelineDesign.Data
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            // throw new UnintentionalCodeFirstException();
+            
         }
     
         public virtual DbSet<Node> Node { get; set; }

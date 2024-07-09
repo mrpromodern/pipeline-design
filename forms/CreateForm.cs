@@ -1,4 +1,5 @@
 ﻿using PipelineDesign.Data;
+using PipelineDesign.Forms;
 using PipelineDesign.Services;
 using System;
 using System.Collections.Generic;
@@ -6,41 +7,40 @@ using System.Windows.Forms;
 
 namespace PipelineDesign.forms
 {
-    public partial class CreateForm : Form
+    public partial class CreateForm : BaseForm
     {
-        private readonly INodeService _nodeService;
-        private readonly IPipelineService _pipelineService;
-
-        public CreateForm(INodeService nodeService, IPipelineService pipelineService)
+        private List<Node> CreateNodesFromGrid(DataGridView dataGrid, string pipelineId)
         {
-            _nodeService = nodeService;
-            _pipelineService = pipelineService;
-            InitializeComponent();
-            this.StartPosition = FormStartPosition.CenterScreen;
-        }
-
-        private bool AreSpecificInputsFilled()
-        {
-            if (txtNamePipeline.Text == "")
-            {
-                MessageBox.Show("Заполните поле -Название трубопровода-");
-                return false;
-            }
-
-            foreach (DataGridViewRow row in dataGridXY.Rows)
+            var nodes = new List<Node>();
+            foreach (DataGridViewRow row in dataGrid.Rows)
             {
                 if (row.Cells[0].Value != null && row.Cells[1].Value != null)
                 {
-                    return true;
+                    double x, y;
+                    if (double.TryParse(row.Cells[0].Value.ToString(), out x) && double.TryParse(row.Cells[1].Value.ToString(), out y))
+                    {
+                        nodes.Add(new Node
+                        {
+                            X = x,
+                            Y = y,
+                            PipelineId = pipelineId
+                        });
+                    }
                 }
             }
+            return nodes;
+        }
 
-            return false;
+        public CreateForm(INodeService nodeService, IPipelineService pipelineService) : base (nodeService, pipelineService)
+        {
+            this.StartPosition = FormStartPosition.CenterScreen;
+
+            InitializeComponent();
         }
 
         private void createButton_Click(object sender, EventArgs e)
         {
-            if (AreSpecificInputsFilled())
+            if (AreSpecificInputsFilled(txtNamePipeline, dataGridXY))
             {
                 var pipeline = new Pipeline
                 {
@@ -49,31 +49,12 @@ namespace PipelineDesign.forms
 
                 _pipelineService.CreatePipeline(pipeline);
 
-                var nodes = new List<Node>();
-                foreach (DataGridViewRow row in dataGridXY.Rows)
-                {
-                    if (row.Cells[0].Value != null && row.Cells[1].Value != null)
-                    {
-                        nodes.Add(new Node
-                        {
-                            X = Convert.ToDouble(row.Cells[0].Value),
-                            Y = Convert.ToDouble(row.Cells[1].Value),
-                            PipelineId = pipeline.Id
-                        });
-                    }
-                }
+                _nodeService.CreateNodes(CreateNodesFromGrid(dataGridXY, pipeline.Id));
 
-                _nodeService.CreateNodes(nodes);
+                MessageBox.Show("Трубопровод успешно создан.");
 
-                if (MessageBox.Show("Трубопровод успешно создан. Хотите закончить?", "Успешно", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
-                    Close();
-                }
-                else
-                {
-                    txtNamePipeline.Text = "";
-                    dataGridXY.Rows.Clear();
-                }
+                txtNamePipeline.Text = "";
+                dataGridXY.Rows.Clear();
             }
         }
     }

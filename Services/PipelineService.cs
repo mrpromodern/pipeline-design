@@ -39,7 +39,7 @@ namespace PipelineDesign.Services
 
         public void DeletePipeline(string id)
         {
-            _pipelineRepository.Delete(id);
+            _pipelineRepository.DeletePipeline(id);
             _pipelineRepository.Save();
         }
     }

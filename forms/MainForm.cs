@@ -3,7 +3,8 @@ using PipelineDesign.forms;
 using PipelineDesign.Forms;
 using PipelineDesign.Services;
 using System;
-using System.Collections;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -12,10 +13,10 @@ namespace PipelineDesign
 {
     public partial class MainForm : Form
     {
-        private MenuStrip menuStrip;
         private readonly INodeService _nodeService;
         private readonly IPipelineService _pipelineService;
         private readonly IServiceProvider _serviceProvider;
+        
         private void LoadGraph()
         {
             chart.Series.Clear();
@@ -25,13 +26,14 @@ namespace PipelineDesign
             chart.ChartAreas.Add(chartArea);
 
             var nodes = _nodeService.GetAllNodes();
-            var pipelines = _pipelineService.GetAllPipelines().Reverse();
+            var pipelines = _pipelineService.GetAllPipelines();
 
             var nodeSeries = new Series
             {
                 ChartType = SeriesChartType.Point,
                 IsVisibleInLegend = false
             };
+
             foreach (var node in nodes)
             {
                 nodeSeries.Points.AddXY(node.X, node.Y);
@@ -72,13 +74,8 @@ namespace PipelineDesign
         private void LoadDataGrid()
         {
             dataGridPipelines.Rows.Clear();
-            dataGridPipelines.Columns.Clear();
 
-            dataGridPipelines.Columns.Add("Name","№");
-            dataGridPipelines.Columns.Add("X", "X");
-            dataGridPipelines.Columns.Add("Y", "Y");
-
-            var pipelines = _pipelineService.GetAllPipelines().Reverse();
+            var pipelines = _pipelineService.GetAllPipelines();
 
             foreach (var pipeline in pipelines)
             {
@@ -89,37 +86,155 @@ namespace PipelineDesign
             }
         }
 
+        private void CheckCollisions()
+        {
+            dataGridPipelines.Rows.Clear();
+            var pipelines = _pipelineService.GetAllPipelines().ToArray();
+
+            for (int i = 0; i < pipelines.Length; i++)
+            {
+                for (int j = i + 1; j < pipelines.Length; j++)
+                {
+                    var pipeline1 = pipelines[i];
+                    var pipeline2 = pipelines[j];
+                    var nodes1 = pipeline1.Node.ToArray();
+                    var nodes2 = pipeline2.Node.ToArray();
+
+                    for (int k = 0; k < pipeline1.Node.Count - 1; k++)
+                    {
+                        for (int l = 0; l < pipeline2.Node.Count - 1; l++)
+                        {
+                            if (LinesIntersect(nodes1[k], nodes1[k + 1], nodes2[l], nodes2[l + 1]))
+                            {
+                                MessageBox.Show($"Коллизия между трубопроводами {pipeline1.Name} и {pipeline2.Name}.");
+                                var pipelineCollisions = new List<Pipeline>();
+
+                                pipelineCollisions.Add(new Pipeline
+                                {
+                                    Name = pipeline1.Name,
+                                    Node = new List<Node> { nodes1[k], nodes1[k + 1] }
+                                });
+                                pipelineCollisions.Add(new Pipeline
+                                {
+                                    Name = pipeline2.Name,
+                                    Node = new List<Node> { nodes2[l], nodes2[l + 1] }
+                                });
+
+                                LoadDataGridCollisions(pipelineCollisions);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private bool LinesIntersect(Node a, Node b, Node c, Node d)
+        {
+            var a1 = b.Y - a.Y;
+            var b1 = a.X - b.X;
+            var c1 = b.X * a.Y - a.X * b.Y;
+
+            var a2 = d.Y - c.Y;
+            var b2 = c.X - d.X;
+            var c2 = d.X * c.Y - c.X * d.Y;
+
+            var delta = a1 * b2 - a2 * b1;
+
+            if (delta == 0)
+            {
+                return false;
+            }
+
+            var x = (b1 * c2 - b2 * c1) / delta;
+            var y = (a2 * c1 - a1 * c2) / delta;
+
+            return x >= Math.Min(a.X, b.X) && x <= Math.Max(a.X, b.X) && y >= Math.Min(a.Y, b.Y) && y <= Math.Max(a.Y, b.Y) &&
+                x >= Math.Min(c.X, d.X) && x <= Math.Max(c.X, d.X) && y >= Math.Min(c.Y, d.Y) && y <= Math.Max(c.Y, d.Y);
+        }
+
+        private void ShowDialogAndRefreshUI<T>() where T : Form
+        {
+            if (_serviceProvider.GetService(typeof(T)) is T form)
+            {
+                form.FormClosed += OnFormClosed;
+                form.ShowDialog();
+            }
+        }
+
+        private void OnFormClosed(object sender, FormClosedEventArgs e)
+        {
+            RefreshUI();
+        }
+
+        private void RefreshUI()
+        {
+            LoadGraph();
+            LoadDataGrid();
+        }
+
+        private void LoadDataGridCollisions(List<Pipeline> pipelines)
+        {
+            var color = Color.FromArgb(new Random().Next(200, 256), new Random().Next(150, 205), 0);
+
+            foreach (var pipeline in pipelines)
+            {
+                foreach (var node in pipeline.Node)
+                {
+                    var row = dataGridPipelines.Rows.Add(pipeline.Name, node.X, node.Y);
+                    dataGridPipelines.Rows[row].DefaultCellStyle.BackColor = color;
+                }
+            }
+        }
+
         public MainForm(INodeService nodeService, IPipelineService pipelineService, IServiceProvider serviceProvider)
         {
             _nodeService = nodeService;
             _pipelineService = pipelineService;
             _serviceProvider = serviceProvider;
-            InitializeComponent();
+
             this.StartPosition = FormStartPosition.CenterScreen;
-            LoadGraph();
-            LoadDataGrid();
+
+            InitializeComponent();
+            InitializeDataGridView();
+
+            RefreshUI();
+        }
+
+        private void InitializeDataGridView()
+        {
+            dataGridPipelines.Columns.Add("Name", "№");
+            dataGridPipelines.Columns.Add("X", "X");
+            dataGridPipelines.Columns.Add("Y", "Y");
         }
 
         private void createToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (CreateForm createForm = (CreateForm)_serviceProvider.GetService(typeof(CreateForm)))
-            {
-                createForm.ShowDialog();
-            }
+            ShowDialogAndRefreshUI<CreateForm>();
         }
 
         private void updateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-           using (UpdateForm updateForm = (UpdateForm)_serviceProvider.GetService(typeof(UpdateForm)))
+            ShowDialogAndRefreshUI<UpdateForm>();
+        }
+
+        private void findToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CheckCollisions();
+            if (dataGridPipelines.Rows.Count < 1)
             {
-                updateForm.ShowDialog();
+                MessageBox.Show("Коллизий не найдено.");
+                LoadDataGrid();
             }
         }
 
-        private void showToolStripMenuItem_Click(object sender, EventArgs e)
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            LoadGraph();
-            LoadDataGrid();
+            ShowDialogAndRefreshUI<DeleteForm>();
+        }
+
+        private void resetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            RefreshUI();
         }
     }
 }

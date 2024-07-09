@@ -38,7 +38,9 @@ namespace PipelineDesign
             services.AddSingleton<IPipelineRepository, PipelineRepository>();
 
             services.AddSingleton<MainForm>();
+            services.AddSingleton<BaseForm>();
             services.AddSingleton<CreateForm>();
+            services.AddSingleton<DeleteForm>();
             services.AddSingleton<UpdateForm>();
         }
     }

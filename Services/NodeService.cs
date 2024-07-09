@@ -53,5 +53,11 @@ namespace PipelineDesign.Services
             _nodeRepository.Delete(id);
             _nodeRepository.Save();
         }
+
+        public void DeleteNodes(IEnumerable<Node> nodes)
+        {
+            _nodeRepository.DeleteMany(nodes);
+            _nodeRepository.Save();
+        }
     }
 }

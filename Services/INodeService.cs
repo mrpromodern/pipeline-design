@@ -11,5 +11,6 @@ namespace PipelineDesign.Services
         void CreateNodes(IEnumerable<Node> nodes);
         void UpdateNode(Node node);
         void DeleteNode(string id);
+        void DeleteNodes(IEnumerable<Node> nodes);
     }
 }

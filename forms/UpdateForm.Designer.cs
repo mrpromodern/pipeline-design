@@ -29,27 +29,28 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UpdateForm));
-            this.createButton = new System.Windows.Forms.Button();
+            this.updateButton = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.txtNamePipeline = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.dataGridXY = new System.Windows.Forms.DataGridView();
             this.X = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Y = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.comboBoxPipelines = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.comboBoxPipelines = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridXY)).BeginInit();
             this.SuspendLayout();
             // 
-            // createButton
+            // updateButton
             // 
-            this.createButton.BackColor = System.Drawing.SystemColors.HighlightText;
-            this.createButton.Location = new System.Drawing.Point(13, 360);
-            this.createButton.Name = "createButton";
-            this.createButton.Size = new System.Drawing.Size(295, 43);
-            this.createButton.TabIndex = 9;
-            this.createButton.Text = "Обновить";
-            this.createButton.UseVisualStyleBackColor = false;
+            this.updateButton.BackColor = System.Drawing.SystemColors.HighlightText;
+            this.updateButton.Location = new System.Drawing.Point(13, 360);
+            this.updateButton.Name = "updateButton";
+            this.updateButton.Size = new System.Drawing.Size(295, 43);
+            this.updateButton.TabIndex = 9;
+            this.updateButton.Text = "Обновить";
+            this.updateButton.UseVisualStyleBackColor = false;
+            this.updateButton.Click += new System.EventHandler(this.updateButton_Click);
             // 
             // label2
             // 
@@ -98,17 +99,6 @@
             this.Y.HeaderText = "Y";
             this.Y.Name = "Y";
             // 
-            // comboBoxPipelines
-            // 
-            this.comboBoxPipelines.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxPipelines.FormattingEnabled = true;
-            this.comboBoxPipelines.Location = new System.Drawing.Point(12, 31);
-            this.comboBoxPipelines.Name = "comboBoxPipelines";
-            this.comboBoxPipelines.Size = new System.Drawing.Size(296, 27);
-            this.comboBoxPipelines.TabIndex = 10;
-            this.comboBoxPipelines.SelectedIndexChanged += new System.EventHandler(this.comboBoxPipelines_SelectedIndexChanged);
-            this.comboBoxPipelines.TextChanged += new System.EventHandler(this.comboBoxPipelines_TextChanged);
-            // 
             // label3
             // 
             this.label3.AutoSize = true;
@@ -118,21 +108,30 @@
             this.label3.TabIndex = 11;
             this.label3.Text = "Выбор трубопровода";
             // 
+            // comboBoxPipelines
+            // 
+            this.comboBoxPipelines.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxPipelines.FormattingEnabled = true;
+            this.comboBoxPipelines.Location = new System.Drawing.Point(12, 31);
+            this.comboBoxPipelines.Name = "comboBoxPipelines";
+            this.comboBoxPipelines.Size = new System.Drawing.Size(296, 27);
+            this.comboBoxPipelines.TabIndex = 14;
+            this.comboBoxPipelines.SelectedIndexChanged += new System.EventHandler(this.comboBoxPipelines_SelectedIndexChanged);
+            // 
             // UpdateForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(320, 412);
-            this.Controls.Add(this.label3);
             this.Controls.Add(this.comboBoxPipelines);
-            this.Controls.Add(this.createButton);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.updateButton);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtNamePipeline);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.dataGridXY);
-            this.Font = new System.Drawing.Font("Roboto", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.Font = new System.Drawing.Font("Roboto", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "UpdateForm";
             this.Text = "Обновление трубопровода";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridXY)).EndInit();
@@ -143,14 +142,14 @@
 
         #endregion
 
-        private System.Windows.Forms.Button createButton;
+        private System.Windows.Forms.Button updateButton;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtNamePipeline;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.DataGridView dataGridXY;
         private System.Windows.Forms.DataGridViewTextBoxColumn X;
         private System.Windows.Forms.DataGridViewTextBoxColumn Y;
-        private System.Windows.Forms.ComboBox comboBoxPipelines;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ComboBox comboBoxPipelines;
     }
 }

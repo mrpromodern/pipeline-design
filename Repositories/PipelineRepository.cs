@@ -9,10 +9,12 @@ namespace PipelineDesign.Repositories
     {
         private readonly AppDbContext _context;
         private readonly DbSet<Pipeline> _dbSet;
+        private readonly DbSet<Node> _nodeDbSet;
         public PipelineRepository(AppDbContext context) : base(context)
         {
             _context = context;
             _dbSet = context.Set<Pipeline>();
+            _nodeDbSet = context.Set<Node>();
         }
 
         public IEnumerable<Pipeline> GetPipelines()
@@ -28,6 +30,15 @@ namespace PipelineDesign.Repositories
 
         public Pipeline GetPipelineById(string id) {
             return _dbSet.Include(p => p.Node).FirstOrDefault(p => p.Id == id);
+        }
+
+        public void DeletePipeline(string id) {
+            var pipeline = _dbSet.Find(id);
+            if (pipeline != null) {
+                IEnumerable<Node> nodes = pipeline.Node;
+                _nodeDbSet.RemoveRange(nodes);
+                Delete(id);
+            }
         }
     }
 }

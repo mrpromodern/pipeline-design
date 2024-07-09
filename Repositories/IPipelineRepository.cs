@@ -7,5 +7,6 @@ namespace PipelineDesign.Repositories
     {
         IEnumerable<Pipeline> GetPipelines();
         Pipeline GetPipelineById(string id);
+        void DeletePipeline(string id);
     }
 }
